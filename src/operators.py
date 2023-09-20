@@ -40,10 +40,3 @@ class BiConditional:
 
     def __repr__(self):
         return f"BiConditional({self.left}, {self.right})"
-
-class Preposition:
-    def __init__(self, expr):
-        self.expr = expr
-
-    def __repr__(self):
-        return f"Preposition({self.expr})"
