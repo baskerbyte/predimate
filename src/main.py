@@ -1,9 +1,15 @@
+from extractor import wrap_formula
+
 premise = ""
-premises = []
+formulas = []
 
 while premise != "0":
-    premise = input("Digite uma premissa (ou 0 para sair): ").upper()
+    premise = input("Digite uma premissa (ou 0 para sair): ")
 
-    premises.append(premise)
+    if premise != "0":
+        formulas.append(wrap_formula(premise))
 
 conclusion = input("Digite a conclusão: ")
+formulas.append(wrap_formula(conclusion))
+
+print(formulas)
