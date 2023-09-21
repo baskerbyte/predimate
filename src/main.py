@@ -1,15 +1,34 @@
 from extractor import wrap_formula
+from interpreter import interpret_formula
 
-premise = ""
-formulas = []
+args = []
 
-while premise != "0":
+while True:
     premise = input("Digite uma premissa (ou 0 para sair): ")
 
-    if premise != "0":
-        formulas.append(wrap_formula(premise))
+    if premise == "0":
+        break
+
+    args.append(premise)
 
 conclusion = input("Digite a conclusão: ")
-formulas.append(wrap_formula(conclusion))
+formulas = []
 
-print(formulas)
+args.append(conclusion)
+
+for arg in args:
+    wraped = wrap_formula(arg)
+
+    if wraped is None:
+        quit(f"Argumento \"{arg}\" inválido")
+
+    formulas.append(wrap_formula(arg))
+
+print(repr(formulas))
+
+unwraped = []
+
+for formula in formulas:
+    unwraped.append(interpret_formula(formula))
+
+print(unwraped)
