@@ -1,5 +1,5 @@
-from extractor import wrap_formula
-from interpreter import interpret_formula
+from src.data.encode import wrap_formula
+from src.data.decode import interpret_formula
 
 args = []
 
