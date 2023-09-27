@@ -1,3 +1,4 @@
+from src.data.decode import interpret_formula
 from src.entity.operators import *
 
 
@@ -46,23 +47,22 @@ def wrap_formula(expr):
 
             j = i + 1
             open_count = 1
-            has = False
+
             while j < len(expr):
                 if expr[j] == '(':
-                    has = True
                     open_count += 1
                 elif expr[j] == ')':
                     open_count -= 1
                     if open_count == 0:
                         break
                 j += 1
-            if open_count != 0 and has:
+            if open_count != 0 and not expr[i].isalpha():
                 raise ValueError("Parênteses desequilibrados")
 
-            if has:
-                sub_result = wrap_formula(expr[i + 1:j])
+            if expr[i].isalpha():
+                sub_result = wrap_formula(expr[i])
             else:
-                sub_result = wrap_formula(expr[i:])
+                sub_result = wrap_formula(expr[i + 1:j])
 
             result.append(Negation(sub_result))
             i = j

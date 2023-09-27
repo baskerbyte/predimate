@@ -137,7 +137,7 @@ class TestEncode(unittest.TestCase):
         )
 
         self.assertEqual(
-            Disjunction(left=Negation(expr=Negation(expr=Negation(expr=Disjunction(left='P', right='Q')))), right=Conditional(left=Negation(expr=Disjunction(left='R', right='S')), right=Negation(expr=BiConditional(left=Disjunction(left='T', right='U'), right='W')))),
+            Negation(expr=Disjunction(left=Negation(expr=Negation(expr=Disjunction(left='P', right='Q'))), right=Conditional(left=Negation(expr=Disjunction(left='R', right='S')), right=Negation(expr=BiConditional(left=Disjunction(left='T', right='U'), right='W'))))),
             wrap_formula("~(~(~(PvQ))v(~(RvS)->~((TvU)<->W)))")
         )
 
