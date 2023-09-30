@@ -17,18 +17,16 @@ formulas = []
 args.append(conclusion)
 
 for arg in args:
-    wraped = wrap_formula(arg)
+    wrapped = wrap_formula(arg)
 
-    if wraped is None:
+    if wrapped is None:
         quit(f"Argumento \"{arg}\" inválido")
 
     formulas.append(wrap_formula(arg))
 
-print(repr(formulas))
-
-unwraped = []
+unwrapped = []
 
 for formula in formulas:
-    unwraped.append(interpret_formula(formula))
+    unwrapped.append(interpret_formula(formula))
 
-print(unwraped)
+print(unwrapped)

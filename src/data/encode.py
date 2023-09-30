@@ -1,4 +1,3 @@
-from src.data.decode import interpret_formula
 from src.entity.operators import *
 
 

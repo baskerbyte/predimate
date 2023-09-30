@@ -143,7 +143,7 @@ class TestDecode(unittest.TestCase):
 
         self.assertEqual(
             "~(~(~(PvQ))v(~(RvS)->~((TvU)<->W)))",
-            interpret_formula(Disjunction(left=Negation(expr=Negation(expr=Negation(expr=Disjunction(left='P', right='Q')))), right=Conditional(left=Negation(expr=Disjunction(left='R', right='S')), right=Negation(expr=BiConditional(left=Disjunction(left='T', right='U'), right='W')))))
+            interpret_formula(Negation(expr=Disjunction(left=Negation(expr=Negation(expr=Disjunction(left='P', right='Q'))), right=Conditional(left=Negation(expr=Disjunction(left='R', right='S')), right=Negation(expr=BiConditional(left=Disjunction(left='T', right='U'), right='W'))))))
         )
 
 
