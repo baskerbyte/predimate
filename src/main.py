@@ -1,20 +1,30 @@
 from src.data.encode import wrap_formula
-from src.data.decode import interpret_formula
+from src.truth_table.draw import draw_table
+from src.truth_table.table import generate_combinations, evaluate_expressions, extract_expressions
+
+print("Menu Principal:")
+print("1 - Tabela Verdade")
+print("0 - Sair")
+
+menu = int(input("Escolha uma opção: "))
 
 args = []
+conclusion = None
 
 while True:
-    premise = input("Digite uma premissa (ou 0 para sair): ")
+    premise = input("Digite uma premissa (ou 0 para pular): ")
 
     if premise == "0":
+        conclusion_ipt = input("Digite a conclusão: ")
+
+        if conclusion_ipt != "0":
+            conclusion = conclusion_ipt
+
         break
 
     args.append(premise)
 
-conclusion = input("Digite a conclusão: ")
 formulas = []
-
-args.append(conclusion)
 
 for arg in args:
     wrapped = wrap_formula(arg)
@@ -24,9 +34,34 @@ for arg in args:
 
     formulas.append(wrap_formula(arg))
 
-unwrapped = []
+if conclusion is not None:
+    conclusion = wrap_formula(conclusion)
 
-for formula in formulas:
-    unwrapped.append(interpret_formula(formula))
+if menu == 1:
+    expressions = []
+    premises = []
 
-print(unwrapped)
+    for formula in formulas:
+        extracted = extract_expressions(formula)
+
+        for expr in extracted:
+            if expr not in expressions and not isinstance(expr, str):
+                expressions.append(expr)
+
+            if expr not in premises and isinstance(expr, str):
+                premises.append(expr)
+
+    if conclusion is not None and not isinstance(conclusion, str):
+        expressions.extend(list(filter(lambda x: not isinstance(x, str), extract_expressions(conclusion))))
+
+    premises.sort()
+
+    combinations = generate_combinations(premises)
+    rows = evaluate_expressions((premises, expressions), combinations)
+
+    print(
+        draw_table(
+            premises + list(map(lambda x: str(x), expressions)),
+            [['V' if value else 'F' for value in row] for row in rows]
+        )
+    )

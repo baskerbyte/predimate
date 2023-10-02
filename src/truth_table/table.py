@@ -13,23 +13,10 @@ def extract_expressions(expr, expressions=None):
         extract_expressions(expr.right, expressions)
         extract_expressions(expr.left, expressions)
 
-    expressions.append(expr)
+    if expr not in expressions:
+        expressions.append(expr)
 
     return expressions
-
-
-def order_expressions(expr):
-    extracted_expression = extract_expressions(expr)
-    prepositions = []
-    expressions = []
-
-    for extracted in extracted_expression:
-        if isinstance(extracted, str):
-            prepositions.append(extracted)
-        else:
-            expressions.append(extracted)
-
-    return sorted(prepositions), expressions
 
 
 def generate_combinations(prepositions):
@@ -61,6 +48,7 @@ def evaluate_expressions(expressions, combinations):
 
     for combination in combinations:
         row = []
+
         for expr in expressions[1]:
             row.append(evaluate_expression(expr, expressions[0], combination))
 
