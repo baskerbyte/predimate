@@ -39,7 +39,11 @@ def evaluate_expression(expr, premises, combinations):
             result_value = left_value == right_value
 
         return result_value
-    elif isinstance(expr, str):
+    elif isinstance(expr, Negation):
+        value = evaluate_expression(expr.expr, premises, combinations)
+
+        return not value
+    else:
         return combinations[premises.index(expr)]
 
 
