@@ -60,11 +60,12 @@ def wrap_formula(expr):
 
             if expr[i].isalpha():
                 sub_result = wrap_formula(expr[i])
+                i += 1
             else:
                 sub_result = wrap_formula(expr[i + 1:j])
+                i = j
 
             result.append(Negation(sub_result))
-            i = j
         elif expr[i].isalpha():
             result.append(expr[i].upper())
             i += 1
