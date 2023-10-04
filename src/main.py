@@ -1,48 +1,56 @@
 from src.data.encode import wrap_formula
 from src.truth_table.draw import draw_table
-from src.truth_table.table import generate_combinations, evaluate_expressions, extract_expressions
+from src.truth_table.table import generate_combinations, evaluate_expressions, extract_expressions, table_type
 
-print("Menu Principal:")
-print("1 - Tabela Verdade")
-print("0 - Sair")
 
-menu = int(input("Escolha uma opção: "))
+def print_main_header():
+    header = """
+      _____              _ _                 _       
+     |  __ \            | (_)               | |      
+     | |__) | __ ___  __| |_ _ __ ___   __ _| |_ ___ 
+     |  ___/ '__/ _ \/ _` | | '_ ` _ \ / _` | __/ _ \\
+     | |   | | |  __/ (_| | | | | | | | (_| | ||  __/
+     |_|   |_|  \___|\__,_|_|_| |_| |_|\__,_|\__\___|
+    """
 
-args = []
-conclusion = None
+    print(header)
 
-while True:
-    premise = input("Digite uma premissa (ou 0 para pular): ")
 
-    if premise == "0":
-        conclusion_ipt = input("Digite a conclusão: ")
+def get_menu_choice():
+    print("\nMenu Principal:")
+    print("1 - Tabela Verdade")
+    print("0 - Sair\n")
 
-        if conclusion_ipt != "0":
-            conclusion = conclusion_ipt
+    return int(input("Escolha uma opção: "))
 
-        break
 
-    args.append(premise)
+def get_input_list(prompt):
+    items = []
 
-formulas = []
+    while True:
+        item = input(prompt)
 
-for arg in args:
-    wrapped = wrap_formula(arg)
+        if item == "0":
+            break
 
-    if wrapped is None:
-        quit(f"Argumento \"{arg}\" inválido")
+        wrapped = wrap_formula(item)
 
-    formulas.append(wrap_formula(arg))
+        if wrapped is None:
+            quit(f"Argumento \"{item}\" inválido")
 
-if conclusion is not None:
-    conclusion = wrap_formula(conclusion)
+        items.append(wrapped)
+    return items
 
-if menu == 1:
+
+def map_expressions(args, conclusion):
     expressions = []
     premises = []
 
-    for formula in formulas:
-        extracted = extract_expressions(formula)
+    if conclusion is not None:
+        args.append(wrap_formula(conclusion))
+
+    for arg in args:
+        extracted = extract_expressions(arg)
 
         for expr in extracted:
             if expr not in expressions and not isinstance(expr, str):
@@ -51,17 +59,34 @@ if menu == 1:
             if expr not in premises and isinstance(expr, str):
                 premises.append(expr)
 
-    if conclusion is not None and not isinstance(conclusion, str):
-        expressions.extend(list(filter(lambda x: not isinstance(x, str), extract_expressions(conclusion))))
-
     premises.sort()
 
-    combinations = generate_combinations(premises)
-    rows = evaluate_expressions((premises, expressions), combinations)
+    return premises, expressions
 
-    print(
-        draw_table(
-            premises + list(map(lambda x: str(x), expressions)),
-            [['V' if value else 'F' for value in row] for row in rows]
-        )
-    )
+
+def main():
+    print_main_header()
+
+    while True:
+        menu = get_menu_choice()
+
+        if menu != 0:
+            args = get_input_list("Digite uma premissa (ou 0 para pular): ")
+            conclusion = input("Digite a conclusão (ou 0 para pular): ")
+
+            if menu == 1:
+                premises, expressions = map_expressions(args, conclusion)
+                combinations = generate_combinations(premises)
+                rows = evaluate_expressions((premises, expressions), combinations)
+
+                header = premises + list(map(lambda x: str(x), expressions))
+                results = [['V' if value else 'F' for value in row] for row in rows]
+
+                print(f"\n{draw_table(header, results)}")
+                print(f'Tipo de tabela: {table_type(rows)}')
+        else:
+            break
+
+
+if __name__ == "__main__":
+    main()

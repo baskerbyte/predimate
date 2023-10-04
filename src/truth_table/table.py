@@ -59,3 +59,12 @@ def evaluate_expressions(expressions, combinations):
         result.append(list(combination) + row)
 
     return result
+
+
+def table_type(results):
+    if all(result[-1] for result in results):
+        return "Tautologia"
+    elif all(not result[-1] for result in results):
+        return "Contradição"
+    else:
+        return "Contingência"
