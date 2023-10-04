@@ -10,8 +10,8 @@ def extract_expressions(expr, expressions=None):
     if isinstance(expr, Negation):
         extract_expressions(expr.expr, expressions)
     elif isinstance(expr, Operator):
-        extract_expressions(expr.right, expressions)
         extract_expressions(expr.left, expressions)
+        extract_expressions(expr.right, expressions)
 
     if expr not in expressions:
         expressions.append(expr)
@@ -43,7 +43,7 @@ def evaluate_expression(expr, premises, combinations):
         value = evaluate_expression(expr.expr, premises, combinations)
 
         return not value
-    else:
+    elif isinstance(expr, str):
         return combinations[premises.index(expr)]
 
 

@@ -46,7 +46,7 @@ def map_expressions(args, conclusion):
     expressions = []
     premises = []
 
-    if conclusion is not None:
+    if conclusion is not None and conclusion != "0":
         args.append(wrap_formula(conclusion))
 
     for arg in args:
