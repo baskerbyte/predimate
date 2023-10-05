@@ -1,7 +1,7 @@
 import unittest
 
-from data.encode import wrap_formula
-from entity.operators import *
+from src.data.encode import wrap_formula
+from src.entity.operators import *
 
 
 class TestEncode(unittest.TestCase):
