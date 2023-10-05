@@ -1,4 +1,4 @@
-from src.entity.operators import *
+from entity.operators import *
 
 
 def wrap_formula(expr):

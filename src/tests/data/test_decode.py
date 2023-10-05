@@ -1,7 +1,7 @@
 import unittest
 
-from src.data.decode import interpret_formula
-from src.entity.operators import *
+from data.decode import interpret_formula
+from entity.operators import *
 
 
 class TestDecode(unittest.TestCase):

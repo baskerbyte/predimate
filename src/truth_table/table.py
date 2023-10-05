@@ -1,6 +1,6 @@
 import itertools
 
-from src.entity.operators import *
+from entity.operators import *
 
 
 def extract_expressions(expr, expressions=None):

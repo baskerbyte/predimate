@@ -1,6 +1,6 @@
-from src.data.encode import wrap_formula
-from src.truth_table.draw import draw_table
-from src.truth_table.table import generate_combinations, evaluate_expressions, extract_expressions, table_type
+from data.encode import wrap_formula
+from truth_table.draw import draw_table
+from truth_table.table import generate_combinations, evaluate_expressions, extract_expressions, table_type
 
 
 def print_main_header():
