@@ -1,4 +1,4 @@
-from entity.base import Base
+from src.entity.base import Base
 
 
 class Operator(Base):

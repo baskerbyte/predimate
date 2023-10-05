@@ -1,4 +1,4 @@
-from entity.operators import *
+from src.entity.operators import *
 
 
 def interpret_formula(expr):
