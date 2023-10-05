@@ -14,3 +14,6 @@ The "Predimate" algorithm, created during the second semester at Ulbra by me, is
 
 <h2>🤝 Contributing</h2>
 <p>For detailed information on how to contribute, please refer to our <a href="https://github.com/OpenLift/libris/blob/dev/CONTRIBUTING.md">Contribution Guide</a>. It covers everything you need to know about making contributions to Libris. Happy contributing! 🚀</p>
+
+<h2>📋 Examples</h2>
+<img src="images/menu.png">
