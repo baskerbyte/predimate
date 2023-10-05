@@ -13,7 +13,7 @@ The "Predimate" algorithm, created during the second semester at Ulbra by me, is
 <p>If you simply want to run Predimate without building it from source, follow the steps listed in <a href="https://github.com/baskerbyte/predimate/blob/dev/docs/installing.md">installing</a> docs.</p>
 
 <h2>🤝 Contributing</h2>
-<p>For detailed information on how to contribute, please refer to our <a href="https://github.com/OpenLift/libris/blob/dev/CONTRIBUTING.md">Contribution Guide</a>. It covers everything you need to know about making contributions to Libris. Happy contributing! 🚀</p>
+<p>For detailed information on how to contribute, please refer to our <a href="https://github.com/baskerbyte/predimate/blob/dev/CONTRIBUTING.md">Contribution Guide</a>. It covers everything you need to know about making contributions to Predimate. Happy contributing! 🚀</p>
 
 <h2>📋 Examples</h2>
 <img src="images/menu.png">
