@@ -29,4 +29,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: predimate-artifacts
-        path: ./dist
+        path: ./dist/predimate.exe
