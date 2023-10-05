@@ -23,3 +23,10 @@ jobs:
     - name: Test with unittest
       run: |
          python -m unittest discover -s src/tests
+    - name: Generate Artifacts
+      run: pyinstaller -F -n predimate src/main.py
+    - name: Archive Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: predimate-artifacts
+        path: ./dist
