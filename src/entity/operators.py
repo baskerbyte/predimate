@@ -35,6 +35,16 @@ class Negation(Base):
         self.expr = expr
 
     def __str__(self):
-        expr_str = f'({self.expr})' if isinstance(self.expr, Operator) or isinstance(self.expr, Negation) else str(self.expr)
+        expr_str = f'({self.expr})' if isinstance(self.expr, Operator) or isinstance(self.expr, Negation) else str(
+            self.expr)
 
         return f'~{expr_str}'
+
+
+operators = {
+    '^': Conjunction,
+    'v': Disjunction,
+    '->': Conditional,
+    '<->': BiConditional,
+    '~': Negation
+}

@@ -1,104 +1,67 @@
 from src.entity.operators import *
 
 
-def wrap_formula(expr):
+def encode_expression(expr: str) -> Base:
     i = 0
-
     result = []
 
     while i < len(expr):
         if expr[i] == '(':
-            j = i + 1
-            open_count = 1
-            while j < len(expr):
-                if expr[j] == '(':
-                    open_count += 1
-                elif expr[j] == ')':
-                    open_count -= 1
-                    if open_count == 0:
-                        break
-                j += 1
-            if open_count != 0:
-                raise ValueError("Parênteses desequilibrados")
-
-            sub_expr = expr[i + 1:j]
-            result.append(wrap_formula(sub_expr))
-
-            i = j + 1
-        elif expr[i] == '^':
             i += 1
+            j = find_parentheses_end(expr[i:]) + i + 1
 
-            return wrap_conjunction(expr[i:], result)
-        elif expr[i] == 'v':
+            result.append(encode_expression(expr[i:j]))
+            i = j
+        elif expr[i] == ')':
             i += 1
-
-            return wrap_disjunction(expr[i:], result)
-        elif expr[i:i + 2] == '->':
-            i += 2
-
-            return wrap_conditional(expr[i:], result)
-        elif expr[i:i + 3] == '<->':
-            i += 3
-
-            return wrap_biconditional(expr[i:], result)
-        elif expr[i] == '~':
-            i += 1
-
-            j = i + 1
-            open_count = 1
-
-            while j < len(expr):
-                if expr[j] == '(':
-                    open_count += 1
-                elif expr[j] == ')':
-                    open_count -= 1
-                    if open_count == 0:
-                        break
-                j += 1
-            if open_count != 0 and not expr[i].isalpha():
-                raise ValueError("Parênteses desequilibrados")
-
-            if expr[i].isalpha():
-                sub_result = wrap_formula(expr[i])
-                i += 1
-            else:
-                sub_result = wrap_formula(expr[i + 1:j])
-                i = j
-
-            result.append(Negation(sub_result))
-        elif expr[i].isalpha():
+        elif expr[i] != 'v' and expr[i].isalpha():
             result.append(expr[i].upper())
             i += 1
         else:
-            i += 1
+            operator = find_operator(expr[i:i + 3])
+            i += len(operator)
+
+            if operator != '~':
+                right = encode_expression(expr[i:])
+                left = result.pop()
+
+                return operators[operator](left, right)
+            else:
+                if expr[i] == '(':
+                    i += 1
+                    j = find_parentheses_end(expr[i:]) + i
+                    sub_result = encode_expression(expr[i:j])
+                    i = j
+                else:
+                    sub_result = encode_expression(expr[i])
+                    i += 1
+
+                result.append(Negation(sub_result))
 
     if len(result) == 1:
         return result[0]
 
 
-def wrap_conjunction(expr, result):
-    right = wrap_formula(expr)
-    left = result.pop()
+def find_parentheses_end(expr: str) -> int:
+    count = 1
 
-    return Conjunction(left, right)
+    for i, char in enumerate(expr):
+        if char == '(':
+            count += 1
+        elif char == ')':
+            count -= 1
+            if count == 0:
+                return i
 
-
-def wrap_disjunction(expr, result):
-    right = wrap_formula(expr)
-    left = result.pop()
-
-    return Disjunction(left, right)
-
-
-def wrap_conditional(expr, result):
-    right = wrap_formula(expr)
-    left = result.pop()
-
-    return Conditional(left, right)
+    raise ValueError("Parênteses desequilibrados")
 
 
-def wrap_biconditional(expr, result):
-    right = wrap_formula(expr)
-    left = result.pop()
+def find_operator(expr: str) -> str:
+    found_operator = None
 
-    return BiConditional(left, right)
+    for operator in operators:
+        if expr.startswith(operator):
+            found_operator = operator
+            break
+
+    return found_operator

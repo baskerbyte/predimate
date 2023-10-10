@@ -1,4 +1,4 @@
-from data.encode import wrap_formula
+from data.encode import encode_expression
 from truth_table.draw import draw_table
 from truth_table.table import generate_combinations, evaluate_expressions, extract_expressions, table_type
 
@@ -33,7 +33,7 @@ def get_input_list(prompt):
         if item == "0":
             break
 
-        wrapped = wrap_formula(item)
+        wrapped = encode_expression(item)
 
         if wrapped is None:
             quit(f"Argumento \"{item}\" inválido")
@@ -47,7 +47,7 @@ def map_expressions(args, conclusion):
     premises = []
 
     if conclusion is not None and conclusion != "0":
-        args.append(wrap_formula(conclusion))
+        args.append(encode_expression(conclusion))
 
     for arg in args:
         extracted = extract_expressions(arg)
