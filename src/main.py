@@ -2,8 +2,6 @@ from data.encode import encode_expression
 from truth_table.draw import draw_table
 from truth_table.table import generate_combinations, evaluate_expressions, table_type
 
-prepositions = []
-expressions = []
 
 def print_main_header():
     header = """
@@ -26,7 +24,7 @@ def get_menu_choice():
     return int(input("Escolha uma opção: "))
 
 
-def parse_input(item):
+def parse_input(item, prepositions, expressions,):
     wrapped = encode_expression(item)
 
     if wrapped is None:
@@ -40,7 +38,7 @@ def parse_input(item):
             prepositions.append(prep.upper())
 
 
-def get_input_list(prompt, repeat=True):
+def get_input_list(prompt, prepositions, expressions, repeat=True):
     if repeat:
         while True:
             item = input(prompt)
@@ -48,14 +46,14 @@ def get_input_list(prompt, repeat=True):
             if item == "0":
                 break
 
-            parse_input(item)
+            parse_input(item, prepositions, expressions)
     else:
         item = input(prompt)
 
         if item == "0":
             return
 
-        parse_input(item)
+        parse_input(item, prepositions, expressions)
     prepositions.sort()
 
 
@@ -66,8 +64,11 @@ def main():
         menu = get_menu_choice()
 
         if menu != 0:
-            get_input_list("Digite uma premissa (ou 0 para pular): ")
-            get_input_list("Digite a conclusão (ou 0 para pular): ", False)
+            prepositions = []
+            expressions = []
+
+            get_input_list("Digite uma premissa (ou 0 para pular): ", prepositions, expressions,)
+            get_input_list("Digite a conclusão (ou 0 para pular): ", prepositions, expressions, False)
 
             if menu == 1:
                 combinations = generate_combinations(prepositions)
@@ -75,7 +76,7 @@ def main():
                 expanded_expressions = [result.pop(0) for result in values]
 
                 rows = list(zip(*values))
-                rows = [list(combinations[i]) + list(rows[i]) for i in range(len(rows))]
+                rows = [list(combinations[i]) + list(rows[i]) for i in range(len(rows))] if rows else combinations
 
                 header = prepositions + list(map(lambda x: str(x), expanded_expressions))
                 results = [['V' if value else 'F' for value in row] for row in rows]
