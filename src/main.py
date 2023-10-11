@@ -67,7 +67,7 @@ def main():
             prepositions = []
             expressions = []
 
-            get_input_list("Digite uma premissa (ou 0 para pular): ", prepositions, expressions,)
+            get_input_list("Digite uma premissa (ou 0 para pular): ", prepositions, expressions)
             get_input_list("Digite a conclusão (ou 0 para pular): ", prepositions, expressions, False)
 
             if menu == 1:

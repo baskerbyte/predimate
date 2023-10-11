@@ -8,7 +8,14 @@ def generate_combinations(prepositions):
 
 
 def evaluate_expression(premises, expr, combinations, result):
-    if isinstance(expr, Operator):
+    if isinstance(expr, Negation):
+        value = not evaluate_expression(premises, expr.expr, combinations, result)
+
+        idx = find_or_add_element(result, expr)
+        result[idx].append(value)
+
+        return value
+    elif isinstance(expr, Operator):
         left_value = evaluate_expression(premises, expr.left, combinations, result)
         right_value = evaluate_expression(premises, expr.right, combinations, result)
         result_value = None
@@ -26,13 +33,6 @@ def evaluate_expression(premises, expr, combinations, result):
         result[idx].append(result_value)
 
         return result_value
-    elif isinstance(expr, Negation):
-        value = not evaluate_expression(premises, expr.expr, combinations, result)
-
-        idx = find_or_add_element(result, expr)
-        result[idx].append(value)
-
-        return value
     elif isinstance(expr, str):
         return combinations[premises.index(expr)]
 
