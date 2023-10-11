@@ -1,7 +1,9 @@
 from data.encode import encode_expression
 from truth_table.draw import draw_table
-from truth_table.table import generate_combinations, evaluate_expressions, extract_expressions, table_type
+from truth_table.table import generate_combinations, evaluate_expressions, table_type
 
+prepositions = []
+expressions = []
 
 def print_main_header():
     header = """
@@ -24,44 +26,37 @@ def get_menu_choice():
     return int(input("Escolha uma opção: "))
 
 
-def get_input_list(prompt):
-    items = []
+def parse_input(item):
+    wrapped = encode_expression(item)
 
-    while True:
+    if wrapped is None:
+        quit(f"Argumento \"{item}\" inválido")
+
+    if wrapped not in expressions:
+        expressions.append(wrapped)
+
+    for prep in list(filter(lambda char: char.isalpha() and char != 'v', item)):
+        if prep not in prepositions:
+            prepositions.append(prep.upper())
+
+
+def get_input_list(prompt, repeat=True):
+    if repeat:
+        while True:
+            item = input(prompt)
+
+            if item == "0":
+                break
+
+            parse_input(item)
+    else:
         item = input(prompt)
 
         if item == "0":
-            break
+            return
 
-        wrapped = encode_expression(item)
-
-        if wrapped is None:
-            quit(f"Argumento \"{item}\" inválido")
-
-        items.append(wrapped)
-    return items
-
-
-def map_expressions(args, conclusion):
-    expressions = []
-    premises = []
-
-    if conclusion is not None and conclusion != "0":
-        args.append(encode_expression(conclusion))
-
-    for arg in args:
-        extracted = extract_expressions(arg)
-
-        for expr in extracted:
-            if expr not in expressions and not isinstance(expr, str):
-                expressions.append(expr)
-
-            if expr not in premises and isinstance(expr, str):
-                premises.append(expr)
-
-    premises.sort()
-
-    return premises, expressions
+        parse_input(item)
+    prepositions.sort()
 
 
 def main():
@@ -71,15 +66,18 @@ def main():
         menu = get_menu_choice()
 
         if menu != 0:
-            args = get_input_list("Digite uma premissa (ou 0 para pular): ")
-            conclusion = input("Digite a conclusão (ou 0 para pular): ")
+            get_input_list("Digite uma premissa (ou 0 para pular): ")
+            get_input_list("Digite a conclusão (ou 0 para pular): ", False)
 
             if menu == 1:
-                premises, expressions = map_expressions(args, conclusion)
-                combinations = generate_combinations(premises)
-                rows = evaluate_expressions((premises, expressions), combinations)
+                combinations = generate_combinations(prepositions)
+                values = evaluate_expressions(prepositions, expressions, combinations)
+                expanded_expressions = [result.pop(0) for result in values]
 
-                header = premises + list(map(lambda x: str(x), expressions))
+                rows = list(zip(*values))
+                rows = [list(combinations[i]) + list(rows[i]) for i in range(len(rows))]
+
+                header = prepositions + list(map(lambda x: str(x), expanded_expressions))
                 results = [['V' if value else 'F' for value in row] for row in rows]
 
                 print(f"\n{draw_table(header, results)}")
