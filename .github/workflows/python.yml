@@ -24,7 +24,7 @@ jobs:
       run: |
          python -m unittest discover -s src/tests
     - name: Generate Artifacts
-      run: pyinstaller -F -n predimate src/main.py
+      run:  pyinstaller --onefile src/main.py
     - name: Archive Artifacts
       uses: actions/upload-artifact@v2
       with:

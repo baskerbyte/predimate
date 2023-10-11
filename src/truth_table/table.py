@@ -7,17 +7,17 @@ def generate_combinations(prepositions):
     return list(itertools.product([True, False], repeat=len(prepositions)))
 
 
-def evaluate_expression(premises, expr, combinations, result):
+def evaluate_expression(prepositions, expr, combinations, result):
     if isinstance(expr, Negation):
-        value = not evaluate_expression(premises, expr.expr, combinations, result)
+        value = not evaluate_expression(prepositions, expr.expr, combinations, result)
 
         idx = find_or_add_element(result, expr)
         result[idx].append(value)
 
         return value
     elif isinstance(expr, Operator):
-        left_value = evaluate_expression(premises, expr.left, combinations, result)
-        right_value = evaluate_expression(premises, expr.right, combinations, result)
+        left_value = evaluate_expression(prepositions, expr.left, combinations, result)
+        right_value = evaluate_expression(prepositions, expr.right, combinations, result)
         result_value = None
 
         if isinstance(expr, Conjunction):
@@ -34,7 +34,7 @@ def evaluate_expression(premises, expr, combinations, result):
 
         return result_value
     elif isinstance(expr, str):
-        return combinations[premises.index(expr)]
+        return combinations[prepositions.index(expr)]
 
 
 def find_or_add_element(lst, element):
