@@ -1,5 +1,6 @@
+from texttable import Texttable
+
 from data.encode import encode_expression
-from truth_table.draw import draw_table
 from truth_table.table import generate_combinations, evaluate_expressions, table_type
 
 
@@ -75,13 +76,20 @@ def main():
                 values = evaluate_expressions(prepositions, expressions, combinations)
                 expanded_expressions = [result.pop(0) for result in values]
 
+                # Orients values in rows
                 rows = list(zip(*values))
+                # Adds the preposition rows to the results
                 rows = [list(combinations[i]) + list(rows[i]) for i in range(len(rows))] if rows else combinations
 
                 header = prepositions + list(map(lambda x: str(x), expanded_expressions))
                 results = [['V' if value else 'F' for value in row] for row in rows]
 
-                print(f"\n{draw_table(header, results)}")
+                table = Texttable()
+                table.set_cols_align("c" * len(header))
+                table.set_max_width(0)
+                table.add_rows([header] + results)
+
+                print(table.draw())
                 print(f'Tipo de tabela: {table_type(rows)}')
         else:
             break
