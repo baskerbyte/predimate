@@ -2,6 +2,7 @@ from texttable import Texttable
 
 from data.encode import encode_expression
 from truth_table.table import generate_combinations, evaluate_expressions, table_type
+from src.entity.operators import *
 
 
 def print_main_header():
@@ -25,7 +26,7 @@ def get_menu_choice():
     return int(input("Escolha uma opção: "))
 
 
-def parse_input(item, prepositions, expressions,):
+def parse_input(item, prepositions, expressions, ):
     wrapped = encode_expression(item)
 
     if wrapped is None:
@@ -74,14 +75,11 @@ def main():
             if menu == 1:
                 combinations = generate_combinations(prepositions)
                 values = evaluate_expressions(prepositions, expressions, combinations)
-                expanded_expressions = [result.pop(0) for result in values]
+                expanded_expressions = values.keys()
 
                 # Orients values in rows
-                rows = list(zip(*values))
-                # Adds the preposition rows to the results
-                rows = [list(combinations[i]) + list(rows[i]) for i in range(len(rows))] if rows else combinations
-
-                header = prepositions + list(map(lambda x: str(x), expanded_expressions))
+                rows = list(zip(*values.values()))
+                header = list(map(lambda x: str(x), expanded_expressions))
                 results = [['V' if value else 'F' for value in row] for row in rows]
 
                 table = Texttable()
@@ -91,6 +89,7 @@ def main():
 
                 print(table.draw())
                 print(f'Tipo de tabela: {table_type(rows)}')
+                break
         else:
             break
 

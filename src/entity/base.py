@@ -10,3 +10,7 @@ class Base:
             return all(getattr(self, attr) == getattr(other, attr) for attr in vars(self) if not attr.startswith('_'))
 
         return False
+
+    def __hash__(self):
+        # Implement a custom hash method for instances of this class
+        return hash(tuple(sorted(self.__dict__.items())))

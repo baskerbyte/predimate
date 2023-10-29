@@ -1,4 +1,5 @@
-import itertools
+from collections import OrderedDict
+from itertools import product
 
 from src.entity.operators import *
 
@@ -13,7 +14,7 @@ def generate_combinations(prepositions):
     Returns:
         list of tuples: A list of tuples representing all possible combinations of True and False for prepositions.
    """
-    return list(itertools.product([True, False], repeat=len(prepositions)))
+    return list(product([True, False], repeat=len(prepositions)))
 
 
 def evaluate_expression(prepositions, expr, combination, result):
@@ -22,9 +23,9 @@ def evaluate_expression(prepositions, expr, combination, result):
 
     Args:
         prepositions (list of str): A list of prepositions in the expression.
-        expr (Base): The logical expression to be evaluated.
+        expr (Any): The logical expression to be evaluated.
         combination (tuple): A list of tuples representing combinations of True and False for prepositions.
-        result (list of list): A list of evaluation results for each expression.
+        result (dict): A list of evaluation results for each expression.
 
     Returns:
         bool: The result of the evaluation.
@@ -39,46 +40,27 @@ def evaluate_expression(prepositions, expr, combination, result):
 
     The function returns the final result of the evaluation.
     """
+    value = None
 
     if isinstance(expr, Operator):
-        # Starts recursively until it reaches a str, to obtain its boolean value
         left_value = evaluate_expression(prepositions, expr.left, combination, result)
         right_value = evaluate_expression(prepositions, expr.right, combination, result)
-        result_value = None
 
         if isinstance(expr, Conjunction):
-            result_value = left_value and right_value
+            value = left_value and right_value
         elif isinstance(expr, Disjunction):
-            result_value = left_value or right_value
+            value = left_value or right_value
         elif isinstance(expr, Conditional):
-            result_value = (not left_value) or right_value
+            value = (not left_value) or right_value
         elif isinstance(expr, BiConditional):
-            result_value = left_value == right_value
-
-        # For each horizontal combination, add the vertical value
-        idx = find_or_add_element(result, expr)
-        result[idx].append(result_value)
-
-        return result_value
+            value = left_value == right_value
     elif isinstance(expr, Negation):
         value = not evaluate_expression(prepositions, expr.expr, combination, result)
+    else:
+        value = combination[prepositions.index(expr.prep)]
 
-        idx = find_or_add_element(result, expr)
-        result[idx].append(value)
-
-        return value
-    elif isinstance(expr, str):
-        # The prepositions are organized in alphabetical order, so you can deduce the position of the tuple
-        return combination[prepositions.index(expr)]
-
-
-def find_or_add_element(lst, element):
-    for i, item in enumerate(lst):
-        if item[0] == element:
-            return i
-
-    lst.append([element])
-    return len(lst) - 1
+    result.setdefault(expr, []).append(value)
+    return value
 
 
 def evaluate_expressions(prepositions, expressions, combinations):
@@ -98,13 +80,26 @@ def evaluate_expressions(prepositions, expressions, combinations):
     **in column orientation**.
     """
 
-    result = []
+    result = {}
 
     for combination in combinations:
         for expr in expressions:
             evaluate_expression(prepositions, expr, combination, result)
 
-    return result
+    keys = list(result.keys())
+
+    return OrderedDict(
+        sorted(
+            result.items(),
+            key=lambda item: (
+                (not isinstance(item[0], Preposition)),
+                str(item[0]) if isinstance(item[0], Preposition) else None,
+                not (isinstance(item[0], Negation) and isinstance(item[0].expr, Preposition)),
+                str(item[0].expr) if isinstance(item[0], Negation) and isinstance(item[0].expr, Preposition) else None,
+                keys.index(item[0])
+            )
+        )
+    )
 
 
 def table_type(results):

@@ -8,22 +8,22 @@ class TestDecode(unittest.TestCase):
     def test_decode_conjunction(self):
         self.assertEqual(
             "P^Q",
-            decode_expression(Conjunction(left='P', right='Q'))
+            decode_expression(Conjunction(left=Preposition(prep='P'), right=Preposition('Q')))
         )
 
         self.assertEqual(
             "(A^B)^C",
-            decode_expression(Conjunction(left=Conjunction(left='A', right='B'), right='C'))
+            decode_expression(Conjunction(left=Conjunction(left=Preposition(prep='A'), right=Preposition(prep='B')), right=Preposition(prep='C')))
         )
 
         self.assertEqual(
             "((D^E)^F)^G",
-            decode_expression(Conjunction(left=Conjunction(left=Conjunction(left='D', right='E'), right='F'), right='G'))
+            decode_expression(Conjunction(left=Conjunction(left=Conjunction(left=Preposition(prep='D'), right=Preposition(prep='E')), right=Preposition(prep='F')), right=Preposition(prep='G')))
         )
 
         self.assertEqual(
             "(((H^I)^J)^K)^L",
-            decode_expression(Conjunction(left=Conjunction(left=Conjunction(left=Conjunction(left='H', right='I'), right='J'), right='K'), right='L'))
+            decode_expression(Conjunction(left=Conjunction(left=Conjunction(left=Conjunction(left=Preposition(prep='H'), right=Preposition(prep='I')), right=Preposition(prep='J')), right=Preposition(prep='K')), right=Preposition(prep='L')))
         )
 
         self.assertEqual(

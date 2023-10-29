@@ -34,7 +34,7 @@ def encode_expression(expr: str) -> Base:
             i += 1
         # Append if char is a real preposition, like: P, Q, R. Ignore 'v' because it's an operator
         elif expr[i] != 'v' and expr[i].isalpha():
-            result.append(expr[i].upper())
+            result.append(Preposition(expr[i].upper()))
             i += 1
         else:
             # The operator with the most characters is <-> (3), so the substring

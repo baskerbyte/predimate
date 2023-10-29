@@ -72,6 +72,14 @@ class Negation(Base):
         return f'~{expr_str}'
 
 
+class Preposition(Base):
+    def __init__(self, prep):
+        self.prep = prep
+
+    def __str__(self):
+        return f'{self.prep}'
+
+
 operators = {
     '^': Conjunction,
     'v': Disjunction,
