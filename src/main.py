@@ -1,7 +1,7 @@
 from texttable import Texttable
 
 from data.encode import encode_expression
-from truth_table.table import generate_combinations, evaluate_expressions, table_type
+from truth_table.table import generate_combinations, evaluate_expressions, table_type, is_valid
 from src.entity.operators import *
 
 
@@ -26,7 +26,7 @@ def get_menu_choice():
     return int(input("Escolha uma opção: "))
 
 
-def parse_input(item, prepositions, expressions, ):
+def parse_input(item, prepositions, expressions):
     wrapped = encode_expression(item)
 
     if wrapped is None:
@@ -40,23 +40,23 @@ def parse_input(item, prepositions, expressions, ):
             prepositions.append(prep.upper())
 
 
-def get_input_list(prompt, prepositions, expressions, repeat=True):
-    if repeat:
-        while True:
-            item = input(prompt)
+def get_input_list(prompt, repeat=True):
+    prepositions, expressions = [], []
 
-            if item == "0":
-                break
-
-            parse_input(item, prepositions, expressions)
-    else:
+    while True:
         item = input(prompt)
 
         if item == "0":
-            return
+            break
 
         parse_input(item, prepositions, expressions)
+
+        if not repeat:
+            break
+
     prepositions.sort()
+
+    return prepositions, expressions
 
 
 def main():
@@ -65,31 +65,34 @@ def main():
     while True:
         menu = get_menu_choice()
 
-        if menu != 0:
-            prepositions = []
-            expressions = []
+        if menu == 0:
+            return
 
-            get_input_list("Digite uma premissa (ou 0 para pular): ", prepositions, expressions)
-            get_input_list("Digite a conclusão (ou 0 para pular): ", prepositions, expressions, False)
+        (prepositions, premises) = get_input_list("Digite uma premissa (ou 0 para pular): ")
+        (_, conclusion) = get_input_list("Digite a conclusão (ou 0 para pular): ", False)
 
-            if menu == 1:
-                combinations = generate_combinations(prepositions)
-                values = evaluate_expressions(prepositions, expressions, combinations)
-                expanded_expressions = values.keys()
+        if menu == 1:
+            expressions = premises + conclusion
+            combinations = generate_combinations(prepositions)
+            values = evaluate_expressions(prepositions, expressions, combinations)
 
-                # Orients values in rows
-                rows = list(zip(*values.values()))
-                header = list(map(lambda x: str(x), expanded_expressions))
-                results = [['V' if value else 'F' for value in row] for row in rows]
+            expanded_expressions = values.keys()
 
-                table = Texttable()
-                table.set_cols_align("c" * len(header))
-                table.set_max_width(0)
-                table.add_rows([header] + results)
+            # Orients values in rows
+            rows = list(zip(*values.values()))
+            header = list(map(lambda x: str(x), expanded_expressions))
+            results = [['V' if value else 'F' for value in row] for row in rows]
 
-                print(table.draw())
-                print(f'Tipo de tabela: {table_type(rows)}')
-                break
+            table = Texttable()
+            table.set_cols_align("c" * len(header))
+            table.set_max_width(0)
+            table.add_rows([header] + results)
+
+            print(table.draw())
+            print(f'Tipo de tabela: {table_type(rows)}')
+
+            if conclusion:
+                print(f'{"O argumento é válido" if is_valid(values, premises, conclusion[0]) else "O argumento é inválido"}')
         else:
             break
 

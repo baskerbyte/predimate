@@ -17,7 +17,7 @@ def generate_combinations(prepositions):
     return list(product([True, False], repeat=len(prepositions)))
 
 
-def evaluate_expression(prepositions, expr, combination, result):
+def evaluate_expression(expr, result, row):
     """
     Recursively evaluate a logical expression.
 
@@ -42,9 +42,12 @@ def evaluate_expression(prepositions, expr, combination, result):
     """
     value = None
 
+    if expr in result and len(result[expr]) > row:
+        return result[expr][row]
+
     if isinstance(expr, Operator):
-        left_value = evaluate_expression(prepositions, expr.left, combination, result)
-        right_value = evaluate_expression(prepositions, expr.right, combination, result)
+        left_value = evaluate_expression(expr.left, result, row)
+        right_value = evaluate_expression(expr.right, result, row)
 
         if isinstance(expr, Conjunction):
             value = left_value and right_value
@@ -55,11 +58,12 @@ def evaluate_expression(prepositions, expr, combination, result):
         elif isinstance(expr, BiConditional):
             value = left_value == right_value
     elif isinstance(expr, Negation):
-        value = not evaluate_expression(prepositions, expr.expr, combination, result)
+        value = not evaluate_expression(expr.expr, result, row)
     else:
-        value = combination[prepositions.index(expr.prep)]
+        return result[expr][row]
 
     result.setdefault(expr, []).append(value)
+
     return value
 
 
@@ -79,12 +83,12 @@ def evaluate_expressions(prepositions, expressions, combinations):
     for prepositions. It returns a list of evaluation results for each expression and each combination
     **in column orientation**.
     """
+    prep_combinations = list(zip(*combinations))
+    result = {Preposition(preposition): prep_combinations[i] for i, preposition in enumerate(prepositions)}
 
-    result = {}
-
-    for combination in combinations:
+    for i in range(len(combinations)):
         for expr in expressions:
-            evaluate_expression(prepositions, expr, combination, result)
+            evaluate_expression(expr, result, i)
 
     keys = list(result.keys())
 
@@ -92,8 +96,7 @@ def evaluate_expressions(prepositions, expressions, combinations):
         sorted(
             result.items(),
             key=lambda item: (
-                (not isinstance(item[0], Preposition)),
-                str(item[0]) if isinstance(item[0], Preposition) else None,
+                not isinstance(item[0], Preposition),
                 not (isinstance(item[0], Negation) and isinstance(item[0].expr, Preposition)),
                 str(item[0].expr) if isinstance(item[0], Negation) and isinstance(item[0].expr, Preposition) else None,
                 keys.index(item[0])
@@ -123,3 +126,29 @@ def table_type(results):
         return "Contradição"
     else:
         return "Contingência"
+
+
+def is_valid(results, premises, conclusion):
+    """
+    Checks the validity of a logical argument based on premise and conclusion truth values.
+
+    Args:
+        results (dict): A dictionary mapping propositional variables to their truth values.
+        premises (list): A list of strings representing the premises of the argument.
+        conclusion (str): A string representing the conclusion of the argument.
+
+    Returns:
+        bool: True if the argument is logically valid, False otherwise.
+
+    The `is_valid` function verifies whether a logical argument is valid based on the truth values of the premises
+    and the conclusion. It uses a truth table to assess the argument's validity.
+    """
+        
+    final_premises = [results[premise] for premise in premises]
+    final_conclusion = results[conclusion]
+
+    for row_premises, row_conclusion in zip(zip(*final_premises), final_conclusion):
+        if (all(row_premises) and not row_conclusion) or not any(row_premises):
+            return False
+
+    return True
