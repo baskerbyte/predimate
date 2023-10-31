@@ -22,10 +22,9 @@ def evaluate_expression(expr, result, row):
     Recursively evaluate a logical expression.
 
     Args:
-        prepositions (list of str): A list of prepositions in the expression.
-        expr (Any): The logical expression to be evaluated.
-        combination (tuple): A list of tuples representing combinations of True and False for prepositions.
+        expr (Base): The logical expression to be evaluated.
         result (dict): A list of evaluation results for each expression.
+        row (int): Current row in combination
 
     Returns:
         bool: The result of the evaluation.
