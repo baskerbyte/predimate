@@ -1,8 +1,7 @@
 from texttable import Texttable
 
-from data.encode import encode_expression
-from truth_table.table import generate_combinations, evaluate_expressions, table_type, is_valid
-from src.entity.operators import *
+from src.data.encode import encode_expression
+from src.cli.truth_table import generate_truth_table
 
 
 def print_main_header():
@@ -72,27 +71,7 @@ def main():
         (_, conclusion) = get_input_list("Digite a conclusão (ou 0 para pular): ", False)
 
         if menu == 1:
-            expressions = premises + conclusion
-            combinations = generate_combinations(prepositions)
-            values = evaluate_expressions(prepositions, expressions, combinations)
-
-            expanded_expressions = values.keys()
-
-            # Orients values in rows
-            rows = list(zip(*values.values()))
-            header = list(map(lambda x: str(x), expanded_expressions))
-            results = [['V' if value else 'F' for value in row] for row in rows]
-
-            table = Texttable()
-            table.set_cols_align("c" * len(header))
-            table.set_max_width(0)
-            table.add_rows([header] + results)
-
-            print(table.draw())
-            print(f'Tipo de tabela: {table_type(rows)}')
-
-            if conclusion:
-                print(f'{"O argumento é válido" if is_valid(values, premises, conclusion[0]) else "O argumento é inválido"}')
+            generate_truth_table(prepositions, premises, conclusion)
         else:
             break
 
