@@ -103,12 +103,9 @@ def find_operator(expr: str) -> str:
         str: The found logical operator or None if none is found.
     """
 
-    found_operator = None
-
     for operator in operators:
         # Use startswith to avoid false truths like in PvQ, making sure that the start is an operator
         if expr.startswith(operator):
-            found_operator = operator
-            break
+            return operator
 
-    return found_operator
+    return None
