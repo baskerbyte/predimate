@@ -1,5 +1,5 @@
 from src.entity.base import Base
-from src.entity.operators import *
+from src.entity.operators import Operator
 
 class Quantifier(Base):
     symbol = ''
@@ -22,3 +22,11 @@ quantifiers = {
     "Ax": Universal,
     "Ex": Existential
 }
+
+class Predicate(Base):
+    def __init__(self, predicate, letters=['x']):
+        self.predicate = predicate.upper()
+        self.letters = [letter.lower() for letter in letters]
+
+    def __str__(self):
+        return f'{self.predicate}{",".join(self.letters)}'
