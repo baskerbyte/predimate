@@ -2,13 +2,7 @@ from src.entity.base import Base
 
 
 class Operator(Base):
-    """
-    Base class for logical operators in a logical expression tree.
-
-    Attributes:
-        left: The left operand of the operator.
-        right: The right operand of the operator.
-    """
+    symbol = ''
 
     def __init__(self, left, right):
         self.left = left
@@ -23,45 +17,22 @@ class Operator(Base):
 
 
 class Conjunction(Operator):
-    """
-    Represents the logical `AND` operation in a logical expression tree.
-    """
-
     symbol = '^'
 
 
 class Disjunction(Operator):
-    """
-    Represents the logical `OR` operation in a logical expression tree.
-    """
-
     symbol = 'v'
 
 
 class Conditional(Operator):
-    """
-    Represents the logical `NOT` `OR` operation in a logical expression tree.
-    """
-
     symbol = '->'
 
 
 class BiConditional(Operator):
-    """
-    Represents the logical `EQ` operation in a logical expression tree.
-    """
-
     symbol = '<->'
 
 
 class Negation(Base):
-    """
-   Represents the logical `NOT` operation in a logical expression tree.
-
-   Attributes:
-       expr: The expression being negated.
-   """
-
     def __init__(self, expr):
         self.expr = expr
 

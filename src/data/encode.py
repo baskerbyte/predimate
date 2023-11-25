@@ -62,11 +62,11 @@ def encode_expression(expr: str) -> Base:
                 j = find_end(expr[i:]) + i + 1
                 sub_result = Predicate(expr[i - 1], [*expr[i:j]])
                 i = j
-            
+
             result.append(quantifiers[quantifier](sub_result))
         else:
             j = find_end(expr[i:]) + i + 1
-            
+
             if j >= 2:
                 sub_result = Predicate(expr[i], [*expr[i + 1:j]])
             else:
@@ -102,6 +102,7 @@ def find_operator(expr: str) -> str | None:
 
     return None
 
+
 def find_quantifier(expr: str) -> str | None:
     for quantifier in quantifiers:
         if expr.startswith(quantifier):
@@ -109,11 +110,12 @@ def find_quantifier(expr: str) -> str | None:
 
     return None
 
+
 def find_end(expr):
     for i in range(len(expr)):
         if not expr[i].isalpha() or expr[i] == 'v':
             return i - 1
         elif i == len(expr) - 1:
             return i
-    
+
     return None
