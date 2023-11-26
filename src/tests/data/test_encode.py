@@ -2,6 +2,7 @@ import unittest
 
 from src.data.encode import encode_expression
 from src.entity.operators import *
+from src.entity.quantifiers import *
 
 
 class TestEncode(unittest.TestCase):
@@ -112,6 +113,89 @@ class TestEncode(unittest.TestCase):
         self.assertEqual(
             Negation(expr=Preposition(prep='P')),
             encode_expression("~P")
+        )
+
+    def test_encode_predicate(self):
+        self.assertEqual(
+            Conditional(left=Predicate(predicate='M', letters=['c']), right=Negation(expr=Predicate(predicate='E', letters=['c']))),
+            encode_expression("Mc->~Ec")
+        )
+
+        self.assertEqual(
+            Conjunction(left=Predicate(predicate='M', letters=['c']), right=Predicate(predicate='M', letters=['b'])),
+            encode_expression("Mc^Mb")
+        )
+
+    def test_encode_universal(self):
+        self.assertEqual(
+            Universal(var='x', expr=Conditional(left=Predicate(predicate='R', letters=['x']), right=Predicate(predicate='V', letters=['x']))),
+            encode_expression("∀x(Rx->Vx)")
+        )
+
+        self.assertEqual(
+            Universal(var='x', expr=Predicate(predicate='R', letters=['x'])),
+            encode_expression("∀xRx")
+        )
+
+        self.assertEqual(
+            Universal(var='x', expr=Negation(expr=Predicate(predicate='R', letters=['x']))),
+            encode_expression("∀x~Rx")
+        )
+
+        self.assertEqual(
+            Negation(expr=Universal(var='x', expr=Predicate(predicate='R', letters=['x']))),
+            encode_expression("~∀xRx")
+        )
+
+        self.assertEqual(
+            Conditional(left=Negation(expr=Conditional(left=Predicate(predicate='L', letters=['b', 'b']), right=Universal(var='x', expr=Negation(expr=Predicate(predicate='L', letters=['b', 'x']))))), right=Universal(var='x', expr=Negation(expr=Predicate(predicate='L', letters=['b', 'x'])))),
+            encode_expression("~Lbb->∀x~Lbx")
+        )
+
+        self.assertEqual(
+            Universal(var='x', expr=Universal(var='y', expr=Predicate(predicate='L', letters=['x', 'y']))),
+            encode_expression("∀x∀yLxy")
+        )
+
+        self.assertEqual(
+            Universal(var='x', expr=Conditional(left=Conjunction(left=Predicate(predicate='R', letters=['x']), right=Predicate(predicate='V', letters=['x'])), right=Predicate(predicate='S', letters=['x']))),
+            encode_expression("∀x((Rx^Vx)->Sx)")
+        )
+
+        self.assertEqual(
+            Universal(var='x', expr=Universal(var='y', expr=Universal(var='z', expr=Conditional(left=Conjunction(left=Predicate(predicate='T', letters=['x', 'y']), right=Predicate(predicate='T', letters=['y', 'z'])), right=Predicate(predicate='T', letters=['x', 'z']))))),
+            encode_expression("∀x∀y∀z((Txy^Tyz)->Txz)")
+        )
+
+    def test_encode_existential(self):
+        self.assertEqual(
+            Existential(var='x', expr=Predicate(predicate='L', letters=['x', 'x'])),
+            encode_expression("∃xLxx")
+        )
+
+        self.assertEqual(
+            Existential(var='x', expr=Conjunction(left=Predicate(predicate='L', letters=['b', 'x']), right=Predicate(predicate='L', letters=['c', 'x']))),
+            encode_expression("∃x(Lbx^Lcx)")
+        )
+
+        self.assertEqual(
+            Existential(var='x', expr=Predicate(predicate='D', letters=['c', 'x', 'b'])),
+            encode_expression("∃xDcxb")
+        )
+
+        self.assertEqual(
+            Existential(var='x', expr=Conjunction(left=Predicate(predicate='A', letters=['x']), right=Predicate(predicate='D', letters=['b', 'x', 'c']))),
+            encode_expression("∃x(Ax^Dbxc)")
+        )
+
+        self.assertEqual(
+            Existential(var='x', expr=Existential(var='y', expr=Predicate(predicate='L', letters=['x', 'y']))),
+            encode_expression("∃x∃yLxy")
+        )
+
+        self.assertEqual(
+            Existential(var='x', expr=Existential(var='y', expr=Existential(var='z', expr=Conditional(left=Conjunction(left=Predicate(predicate='T', letters=['x', 'y']), right=Predicate(predicate='T', letters=['y', 'z'])), right=Predicate(predicate='T', letters=['x', 'z']))))),
+            encode_expression("∃x∃y∃z((Txy^Tyz)->Txz)")
         )
 
     def test_encode(self):
