@@ -38,14 +38,20 @@ def encode_expression(expr: str) -> Base:
                     j = find_parentheses_end(expr[i:]) + i
                     sub_result = encode_expression(expr[i:j])
                     i = j
+                elif not expr[i].isalpha():
+                    i += 1
+                    j = find_end(expr[i:]) + i + 1
+                    sub_result = encode_expression(expr[i - 1:j])
+                    i = j
                 else:
                     j = find_end(expr[i:]) + i + 1
-                    sub_result = encode_expression(expr[i:j])
-                    i += j
+                    sub_result = encode_expression(expr[i:])
+                    i = j
 
                 result.append(Negation(sub_result))
-        elif quantifier := find_quantifier(expr[i:i + 2]):
-            i += len(quantifier)
+        elif quantifier := find_quantifier(expr[i]):
+            i += 2
+            var = expr[i - 1]
 
             if expr[i] == '(':
                 i += 1
@@ -55,15 +61,18 @@ def encode_expression(expr: str) -> Base:
             elif expr[i] == '~':
                 i += 1
                 j = find_end(expr[i:]) + i + 1
-                sub_result = Negation(Predicate(expr[i - 1], [*expr[i:j]]))
+                sub_result = Negation(Predicate(expr[i], [*expr[i + 1:j]]))
                 i = j
+            elif not expr[i].isalpha():
+                sub_result = encode_expression(expr[i:])
+                i = len(expr)
             else:
                 i += 1
                 j = find_end(expr[i:]) + i + 1
-                sub_result = Predicate(expr[i - 1], [*expr[i:j]])
+                sub_result = encode_expression(expr[i - 1:j])
                 i = j
 
-            result.append(quantifiers[quantifier](sub_result))
+            result.append(quantifiers[quantifier](var, sub_result))
         else:
             j = find_end(expr[i:]) + i + 1
 

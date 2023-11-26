@@ -5,21 +5,22 @@ from src.entity.operators import Operator
 class Quantifier(Base):
     symbol = ''
 
-    def __init__(self, expr):
+    def __init__(self, var, expr):
+        self.var = var
         self.expr = expr
 
         self._expr = f'({self.expr})' if isinstance(self.expr, Operator) else str(self.expr)
 
     def __str__(self):
-        return f'{self.symbol}{self._expr}'
+        return f'{self.symbol}{self.var}{self._expr}'
 
 
 class Universal(Quantifier):
-    symbol = '∀x'
+    symbol = '∀'
 
 
 class Existential(Quantifier):
-    symbol = '∃x'
+    symbol = '∃'
 
 
 class Predicate(Base):
@@ -32,6 +33,6 @@ class Predicate(Base):
 
 
 quantifiers = {
-    "Ax": Universal,
-    "Ex": Existential
+    "∀": Universal,
+    "∃": Existential
 }
